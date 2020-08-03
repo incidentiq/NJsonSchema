@@ -69,12 +69,17 @@ namespace NJsonSchema
             var mappings = searchedObjects.ToDictionary(o => o, o => (string)null);
             FindJsonPaths(rootObject, mappings, "#", new HashSet<object>(), contractResolver);
 
-            if (mappings.Any(p => p.Value == null))
-            {
-                throw new InvalidOperationException("Could not find the JSON path of a referenced schema: " +
-                                                    "Manually referenced schemas must be added to the " +
-                                                    "'Definitions' of a parent schema.");
-            }
+            // iiQ Custom
+            // .. Remove invalid null references
+            foreach( var s in mappings.Where( kv => kv.Value == null ).ToList() )
+                mappings.Remove( s.Key );
+
+            //if (mappings.Any(p => p.Value == null))
+            //{
+            //    throw new InvalidOperationException("Could not find the JSON path of a referenced schema: " +
+            //                                        "Manually referenced schemas must be added to the " +
+            //                                        "'Definitions' of a parent schema.");
+            //}
 
             return mappings;
         }

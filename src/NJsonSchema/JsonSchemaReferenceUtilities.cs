@@ -76,10 +76,16 @@ namespace NJsonSchema
 
             var searchedSchemas = schemaReferences.Select(p => p.Value).Distinct();
             var result = JsonPathUtilities.GetJsonPaths(rootObject, searchedSchemas, contractResolver);
+            string referencePath = null;
 
             foreach (var p in schemaReferences)
             {
-                p.Key.ReferencePath = result[p.Value];
+                // iiQ Custom
+                result.TryGetValue( p.Value, out referencePath );
+                if( ! string.IsNullOrEmpty( referencePath ) )
+                    p.Key.ReferencePath = referencePath;
+
+                // p.Key.ReferencePath = result[p.Value];
             }
         }
 
